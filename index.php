@@ -1,11 +1,8 @@
 <?php
-$uri = $_SERVER['REQUEST_URI'];
-$self = $_SERVER['PHP_SELF'];
-$index = basename($self);
+require 'Application.php';
 
-$directories = str_replace($index, '', $self);
+ini_set('display_errors', 1);
 
-$requestString = str_replace($directories, '', $uri);
-
-var_dump($requestString);
+$app = new MvcProject\Application();
+$app->run();
 

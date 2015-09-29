@@ -8,6 +8,6 @@ class DatabaseConfig
     const DB_HOST = 'localhost:3306';
     const DB_USER = 'root';
     const DB_PASS = '';
-    const DB_NAME = 'application';
+    const DB_NAME = 'shopOfTheEnd';
     const DB_INSTANCE = 'app';
 }
