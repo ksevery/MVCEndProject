@@ -1,5 +1,5 @@
 <?php
-namespace MvcProject\Core;
+namespace MvcProject\Models;
 
 
 class User

@@ -36,13 +36,13 @@ class Database
     /**
      * @param string $statement
      * @param array $driverOptions
-     * @return Statement
+     * @return \PDOStatement
      */
     public function prepare($statement, array $driverOptions = [])
     {
         $statement = $this->db->prepare($statement, $driverOptions);
 
-        return new Statement($statement);
+        return $statement;
     }
 
     public function query($query)
