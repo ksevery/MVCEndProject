@@ -4,5 +4,5 @@
   RewriteCond %{REQUEST_URI} !^/favicon\.ico$
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteRule ^(.*)$ index.php?uri=$1 [NC]
+  RewriteRule ^(.*)$ Project/Public/index.php?uri=$1 [NC]
 </IfModule>

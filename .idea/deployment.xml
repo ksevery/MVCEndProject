@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" autoUpload="Always" serverName="localhost:8080">
+  <component name="PublishConfigData" autoUpload="Always" serverName="localhost:8024">
     <serverData>
-      <paths name="localhost:8080">
+      <paths name="localhost:8024">
         <serverdata>
           <mappings>
-            <mapping local="$PROJECT_DIR$" web="/MVCEndProject" />
+            <mapping local="$PROJECT_DIR$/Project/Public" web="/" />
           </mappings>
         </serverdata>
       </paths>

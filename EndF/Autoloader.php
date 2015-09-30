@@ -1,8 +1,10 @@
 <?php
-namespace MvcProject;
+namespace EndF;
 
-class Autoloader
+final class Autoloader
 {
+    private function __construct() { }
+
     public static function init()
     {
         spl_autoload_register(function($class){

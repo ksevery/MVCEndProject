@@ -1,5 +1,5 @@
 <?php
-namespace MvcProject;
+namespace EndF;
 
 class FrontController
 {
