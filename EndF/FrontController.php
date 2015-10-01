@@ -1,64 +1,35 @@
 <?php
 namespace EndF;
 
+use EndF\Routers\DefaultRouter;
+
 class FrontController
 {
+    private static $instance = null;
+
     protected $controller;
     protected $action;
     protected $params;
     protected $basePath = "Controllers/";
 
-    /**
-     * @param array $options Can contain elements 'controller', 'action' and 'params'.
-     */
-    public function __construct(array $options = array())
+    private function __construct()
     {
-        if(empty($options)){
-            $this->parseUri();
-        } else {
-            if(isset($options['controller'])){
-                $this->setController($options['controller']);
-            }
 
-            if(isset($options['action'])){
-                $this->setAction($options['action']);
-            }
-
-            if(isset($options['params'])){
-                $this->setParams($options['params']);
-            }
-        }
     }
 
-    public function run()
+    public function dispatch()
     {
-        call_user_func_array(array(new $this->controller, $this->action), $this->params);
+        $router = new DefaultRouter();
+        $router->parse();
     }
 
-    protected function parseUri()
+    public static function getInstance()
     {
-        $uri = $_SERVER['REQUEST_URI'];
-        $self = $_SERVER['PHP_SELF'];
-        $index = basename($self);
-
-        $directories = str_replace($index, '', $self);
-
-        $requestUri = str_replace($directories, '', $uri);
-        var_dump($requestUri);
-
-        $uriParts = explode('/', $requestUri);
-
-        $controller = array_shift($uriParts);
-        $action = array_shift($uriParts);
-        $params = [];
-        while(!empty($uriParts)){
-            array_push($params, array_shift($uriParts));
+        if(self::$instance == null){
+            self::$instance = new FrontController();
         }
 
-        var_dump($controller);
-        $this->setController($controller);
-        $this->setAction($action);
-        $this->setParams($params);
+        return self::$instance;
     }
 
     /**

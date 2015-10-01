@@ -11,6 +11,11 @@ class Config
 
     private function __construct() { }
 
+    public function getConfigFolder()
+    {
+        return $this->configFolder;
+    }
+
     public function setConfigFolder($configFolder){
         if(!$configFolder){
             throw new \Exception('No config folder path!');
@@ -20,13 +25,17 @@ class Config
         if($realFolder && is_dir($realFolder) && is_readable($realFolder)){
             $this->configArray = array();
             $this->configFolder = $realFolder . DIRECTORY_SEPARATOR;
+            $ns = $this->app['namespaces'];
+            if(is_array($ns)){
+                Autoloader::registerNamespaces($ns);
+            }
         }
     }
 
     public function __get($name)
     {
-        if($this->configArray[$name]){
-            $this->includeConfigFile($this->configFolder . $name . 'php');
+        if(!isset($this->configArray[$name])){
+            $this->includeConfigFile($this->configFolder . $name . '.php');
         }
 
         if(array_key_exists($name, $this->configArray)){
@@ -43,7 +52,7 @@ class Config
         }
 
         $file = realpath($path);
-        if(!$file && is_file($file) && is_readable($file)){
+        if($file && is_file($file) && is_readable($file)){
             $basename = explode('.php', basename($file))[0];
             $this->configArray[$basename] = include $file;
         } else {
