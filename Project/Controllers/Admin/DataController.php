@@ -1,7 +1,8 @@
 <?php
-namespace MvcProject\Controllers;
+namespace Project\Controllers\Admin;
 
-class UsersController
+
+class DataController
 {
     public function update($userId)
     {
