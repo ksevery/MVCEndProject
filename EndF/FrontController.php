@@ -13,6 +13,7 @@ class FrontController
     private $params = array();
     private $rc = null;
     private $basePath = "Controllers/";
+    private $router = null;
 
     private function __construct()
     {
@@ -28,9 +29,9 @@ class FrontController
 
         $parts = explode('/', $uri);
 
-        if(!empty($parts)){
+        if($parts[0]){
             $this->controller = array_shift($parts);
-            if(!empty($parts)){
+            if($parts[0]){
                 $this->method = array_shift($parts);
             } else {
                 $this->method = $this->getDefaultMethod();
@@ -41,17 +42,18 @@ class FrontController
         }
 
         if(is_array($this->rc) &&
-            isset($this->rc['controllers']) &&
-            isset($this->rc['controllers'][$this->controller]['to']))
+            isset($this->rc['controllers']))
         {
             if(isset($this->rc['controllers'][$this->controller]['methods'][$this->method])){
                 $this->method = $this->rc['controllers'][$this->controller]['methods'][$this->method];
             }
 
-            $this->controller = $this->rc['controllers'][$this->controller]['to'];
+            if(isset($this->rc['controllers'][$this->controller]['to'])){
+                $this->controller = $this->rc['controllers'][$this->controller]['to'];
+            }
         }
 
-        $f = $this->namespace . DIRECTORY_SEPARATOR . $this->controller . 'Controller';
+        $f = $this->namespace . DIRECTORY_SEPARATOR . ucfirst($this->controller) . 'Controller';
         $newController = new $f();
         $newController->{$this->method}();
     }
@@ -80,6 +82,26 @@ class FrontController
         }
 
         return 'index';
+    }
+
+    /**
+     * @return Routers\IRouter
+     */
+    public function getRouter()
+    {
+        return $this->router;
+    }
+
+    /**
+     * @param Routers\IRouter $router
+     */
+    public function setRouter($router)
+    {
+        if($router == null){
+            $this->router = new DefaultRouter();
+        } else {
+            $this->router = $router;
+        }
     }
 
     public static function getInstance()
