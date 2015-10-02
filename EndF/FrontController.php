@@ -22,8 +22,11 @@ class FrontController
 
     public function dispatch()
     {
-        $router = new DefaultRouter();
-        $uri = $router->getUri();
+        if($this->router == null){
+            throw new \Exception('Router not set!');
+        }
+
+        $uri = $this->router->getUri();
         $routes = Application::getInstance()->getConfig()->routes;
         $this->setNamespace($routes, $uri);
 
@@ -95,13 +98,9 @@ class FrontController
     /**
      * @param Routers\IRouter $router
      */
-    public function setRouter($router)
+    public function setRouter(Routers\IRouter $router)
     {
-        if($router == null){
-            $this->router = new DefaultRouter();
-        } else {
-            $this->router = $router;
-        }
+        $this->router = $router;
     }
 
     public static function getInstance()

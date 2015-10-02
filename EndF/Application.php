@@ -1,6 +1,9 @@
 <?php
 namespace EndF;
 
+use EndF\Routers\DefaultRouter;
+use EndF\Sessions\NativeSession;
+
 require 'Autoloader.php';
 
 class Application
@@ -8,6 +11,9 @@ class Application
     private static $instance = null;
     private $config = null;
     private $frontController = null;
+    private $router = null;
+    private $dbConnections = array();
+    private $session = null;
 
     private function __construct()
     {
@@ -23,7 +29,45 @@ class Application
         }
 
         $this->frontController = FrontController::getInstance();
+        if($this->router == null) {
+            $this->router = new DefaultRouter();
+        }
+
+        $this->frontController->setRouter($this->router);
+
+        $sess = $this->config->app['session'];
+        if(isset($sess['autostart'])){
+            if($sess['type'] == 'native'){
+                $s = new NativeSession($sess['name'], $sess['lifetime'], $sess['path'], $sess['domain'], $sess['secure']);
+            }
+
+            $this->setSession($s);
+        }
+
         $this->frontController->dispatch();
+    }
+
+    public function getRouter()
+    {
+        return $this->router;
+    }
+
+    public function setRouter($router)
+    {
+        $this->router = $router;
+    }
+
+    /**
+     * @return Sessions\ISession
+     */
+    public function getSession()
+    {
+        return $this->session;
+    }
+
+    public function setSession(\EndF\Sessions\ISession $session)
+    {
+        $this->session = $session;
     }
 
     /**
@@ -44,6 +88,26 @@ class Application
         $this->config->setConfigFolder($path);
     }
 
+    public function getDbConnection($connection = 'default')
+    {
+        if(!$connection){
+            throw new \Exception('No connection identifier given!', 500);
+        }
+
+        if(isset($this->dbConnections[$connection])){
+            return $this->dbConnections[$connection];
+        }
+
+        $connections = $this->getConfig()->database;
+        if(!isset($connections[$connection])){
+            throw new \Exception('No valid connection identifier given!', 500);
+        }
+
+        $dbh = new \PDO($connections[$connection]['connection_uri'], $connections[$connection]['username'], $connections[$connection]['password'], $connections[$connection]['pdo_options']);
+        $this->dbConnections[$connection] = $dbh;
+
+        return $dbh;
+    }
 
     /**
      * @return \EndF\Application
