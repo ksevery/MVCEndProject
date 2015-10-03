@@ -11,6 +11,7 @@ class View
     private $_layoutParts = array();
     private $_layoutData = array();
     private $_extension = '.php';
+
     private function __construct()
     {
         $this->_viewPath = Application::getInstance()->getConfig()->app['views'];
@@ -18,6 +19,7 @@ class View
             $this->_viewPath = realpath('../Views/');
         }
     }
+
     public static function getInstance()
     {
         if (self::$_instance == null) {
@@ -25,14 +27,17 @@ class View
         }
         return self::$_instance;
     }
+
     public function __get($name)
     {
         return $this->_viewBag[$name];
     }
+
     public function __set($name, $value)
     {
         $this->_viewBag[$name] = $value;
     }
+
     public function setViewDirectory($path)
     {
         $path = trim($path);
@@ -47,6 +52,7 @@ class View
             throw new \Exception('Problem with view path', 500);
         }
     }
+
     /**
      * Renders given viewModel with the proper View for it or throws exception when
      * View model does not belong to the calling controller.
@@ -55,18 +61,18 @@ class View
      */
     public function display($viewModel)
     {
-        $this->ValidateViewModel($viewModel);
+        $this->validateViewModel($viewModel);
         $this->_viewBag = $viewModel;
         $this->includeFile($viewModel);
-        $file = $this->GetViewModelPath($viewModel);
+        $file = $this->getViewModelPath($viewModel);
         $path = str_replace('.', DIRECTORY_SEPARATOR, $file);
         $fullPath = $this->_viewDir . $path . $this->_extension;
         $this->includeView($fullPath);
     }
+
     /**
      * Packages must be with starting big letter, views with starting small letters and separated by dot.
      * @param $name
-     * @param array $data
      * @param bool $returnAsString
      * @return string
      * @throws \Exception
@@ -81,12 +87,14 @@ class View
                 }
             }
         }
+
         if ($returnAsString) {
             return $this->includeFile($name);
         } else {
             echo $this->includeFile($name);
         }
     }
+
     /**
      * Flexible append method for views. Can be used with ViewModel or string name of the model.
      * When ViewModel used if the caller is not the Views controller exception is thrown.
@@ -98,26 +106,31 @@ class View
     {
         if ($key && $template) {
             if (!is_string($template)) {
-                $this->ValidateViewModel($template);
+                $this->validateViewModel($template);
                 $this->_viewBag[$key] = $template;
             }
+
             $this->_layoutParts[$key] = $template;
         } else {
             throw new \Exception('Layouts require valid key and template!', 500);
         }
     }
+
     public function getLayoutData($name)
     {
         return $this->_layoutData[$name];
     }
+
     private function includeFile($file)
     {
         if ($this->_viewDir == null) {
             $this->setViewDirectory($this->_viewPath);
         }
+
         if (!is_string($file)) {
-            $file = $this->GetViewModelPath($file);
+            $file = $this->getViewModelPath($file);
         }
+
         $path = str_replace('.', DIRECTORY_SEPARATOR, $file);
         $fullPath = $this->_viewDir . $path . $this->_extension;
         if (file_exists($fullPath) && is_readable($fullPath)) {
@@ -130,15 +143,17 @@ class View
             throw new \Exception('View ' . $file . ' cannot be included', 500);
         }
     }
+
     private function includeView($path)
     {
         include $path;
     }
+
     /**
      * @param $template
      * @throws \Exception
      */
-    private function ValidateViewModel($template)
+    private function validateViewModel($template)
     {
         $trace = debug_backtrace();
         $callerClass = $trace[2]['class'];
@@ -155,7 +170,8 @@ class View
                 "' cannot call ViewModel '" . $given . "' witch is not belonging to him!", 500);
         }
     }
-    private function GetViewModelPath($file)
+
+    private function getViewModelPath($file)
     {
         $tokens = explode('\\', get_class($file));
         $tokens[count($tokens) - 1] = strtolower(str_replace('ViewModel', '', $tokens[count($tokens) - 1]));

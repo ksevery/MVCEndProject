@@ -11,14 +11,18 @@ class Application
     private static $instance = null;
     private $config = null;
     private $frontController = null;
+    /**
+     * @var Routers\IRouter
+     */
     private $router = null;
     private $dbConnections = array();
     private $session = null;
 
     private function __construct()
     {
+        set_exception_handler(array($this, 'exceptionHandler'));
         Autoloader::registerNamespace('EndF', dirname(__FILE__ . DIRECTORY_SEPARATOR));
-        Autoloader::init();
+        Autoloader::registerAutoLoad();
         $this->config = Config::getInstance();
     }
 
@@ -119,5 +123,25 @@ class Application
         }
 
         return self::$instance;
+    }
+
+    public function exceptionHandler(\Exception $ex)
+    {
+        if($this->config && $this->config->app['displayExceptions'] == true){
+            echo '<pre>' . print_r($ex, true) . '</pre>';
+        } else {
+            $this->displayError($ex->getCode());
+        }
+    }
+
+    public function displayError($errorCode)
+    {
+        try{
+            $view = View::getInstance();
+            $view->display('errors.' . $errorCode);
+        } catch (\Exception $ex) {
+            echo '<h1>' . $errorCode . '</h1>';
+            exit;
+        }
     }
 }

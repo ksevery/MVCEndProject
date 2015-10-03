@@ -1,20 +1,22 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: konst
- * Date: 2.10.2015 ã.
- * Time: 21:36
- */
-
 namespace EndF;
 
 
 class Common
 {
+    /**
+     * @param $data
+     * @param string $types Can contain int|float|double|bool|string|trim|noescape
+     * @return bool|float|int|string
+     */
     public static function normalize($data, $types)
     {
-        $types = explode('|', $data);
+        $types = explode('|', $types);
         if(is_array($types)){
+            if(!isset($types['noescape'])) {
+                $data = htmlentities($data);
+            }
+
             if(isset($types['int'])){
                 $data = (int)$data;
             }
@@ -38,8 +40,11 @@ class Common
             if(isset($types['trim'])){
                 $data = trim($data);
             }
+
+            return $data;
         }
 
-        return $data;
+        return htmlentities($data);
     }
+
 }

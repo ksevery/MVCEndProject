@@ -8,4 +8,14 @@ class DefaultRouter implements IRouter
     {
         return trim(urldecode(strtolower(ltrim($_SERVER['REQUEST_URI'], '/'))));
     }
+
+    public function getPost()
+    {
+        return $_POST;
+    }
+
+    public function getRequestMethod()
+    {
+        return $_SERVER['REQUEST_METHOD'];
+    }
 }

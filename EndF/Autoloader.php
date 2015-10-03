@@ -4,63 +4,50 @@ namespace EndF;
 final class Autoloader
 {
     private static $namespaces = array();
-
-    private function __construct() { }
-
-    public static function init()
+    private function __construct()
     {
-        spl_autoload_register(array("\EndF\Autoloader", 'autoload'));
-//        spl_autoload_register(function($class){
-//            $pathParams = explode("\\", $class);
-//            $path = implode(DIRECTORY_SEPARATOR, $pathParams);
-//            $path = str_replace($pathParams[0], "", $path);
-//
-//            require_once $_SERVER['DOCUMENT_ROOT'] . 'MVCEndProject' . $path . ".php";
-//        });
     }
-
+    public static function registerAutoLoad()
+    {
+        spl_autoload_register(array("\\EndF\\Autoloader", 'autoload'));
+    }
     public static function autoload($class)
     {
         self::loadClass($class);
     }
-
     public static function loadClass($class)
     {
-        foreach(self::$namespaces as $key => $value){
-            if(strpos($class, $key) === 0){
-                $classFix = str_replace('\\', DIRECTORY_SEPARATOR, $class);
-                $classFix = substr_replace($classFix, $value, 0, strlen($key)) . '.php';
-                $file = realpath($classFix);
-                if($file && is_readable($file)){
-                    include $file;
+        foreach (self::$namespaces as $namespace => $path) {
+            if (strpos($class, $namespace) === 0) {
+                $invariantSystemPath = str_replace('\\', DIRECTORY_SEPARATOR, $class);
+                $filePath = substr_replace($invariantSystemPath, $path, 0, strlen($namespace)) . '.php';
+                $realPath = realpath($filePath);
+                if ($realPath && is_readable($realPath)) {
+                    include $realPath;
                 } else {
-                    throw new \Exception('File cannot be included: ' . $file);
+                    throw new \Exception('File cannot be included: ' . $filePath, 404);
                 }
-
                 break;
             }
         }
     }
-
     public static function registerNamespace($namespace, $path)
     {
         $namespace = trim($namespace);
-        if(strlen($namespace) > 0){
-            if(!$path){
-                throw new \Exception('Invalid path.');
+        if (strlen($namespace) > 0) {
+            if (!$path) {
+                throw new \Exception('Invalid path: ' . $namespace);
             }
-
-            $path = realpath($path);
-            if($path && is_dir($path) && is_readable($path)){
-                self::$namespaces[$namespace . '\\'] = $path . DIRECTORY_SEPARATOR;
+            $realPath = realpath($path);
+            if ($realPath && is_dir($realPath) && is_readable($realPath)) {
+                self::$namespaces[$namespace . '\\'] = $realPath . DIRECTORY_SEPARATOR;
             } else {
-                throw new \Exception('Namespace directory read error: ' . $path);
+                throw new \Exception('Namespace directory read error in:' . $path);
             }
         } else {
             throw new \Exception('Invalid namespace: ' . $namespace);
         }
     }
-
     public static function registerNamespaces($namespaces)
     {
         if (is_array($namespaces)) {

@@ -30,7 +30,7 @@ class InputData
         }
     }
 
-    public function getPost($post)
+    public function setPost($post)
     {
         if (is_array($post)) {
             $this->post = $post;
@@ -41,7 +41,7 @@ class InputData
      * @param $id
      * @param null $normalize Can contain values int|float|double|string|trim
      * @param null $default
-     * @return null|void
+     * @return null|string
      */
     public function get($id, $normalize = null, $default = null)
     {
@@ -75,6 +75,11 @@ class InputData
         return $default;
     }
 
+    public function postForDb($name, $normalize = null, $default = null){
+        $normalize = 'noescape|' . $normalize;
+        return $this->post($name, $normalize, $default);
+    }
+
     public function cookies($name, $normalize = null, $default = null)
     {
         if ($this->hasCookies($name)) {
@@ -100,6 +105,6 @@ class InputData
 
     public function hasCookies($name)
     {
-        return array_key_exists($name, $this->post);
+        return array_key_exists($name, $this->cookies);
     }
 }

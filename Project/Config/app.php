@@ -1,7 +1,13 @@
 <?php
-$cnf['namespaces']['MvcProject\Controllers'] = 'C:\xampp\htdocs\MVCProject\MVCEndProject\Project\Controllers\\';
+$cnf['namespaces']['Controllers'] = '../Controllers/';
+$cnf['namespaces']['Controllers\Admin'] = '../Controllers/Admin/';
+$cnf['namespaces']['Models'] = '../Models/';
+$cnf['namespaces']['Views'] = '../Views/';
+
+$cnf['views'] = '../Views/';
 $cnf['default_controller'] = 'home';
 $cnf['default_method'] = 'index';
+$cnf['displayExceptions'] = true;
 
 $cnf['session']['autostart'] = true;
 $cnf['session']['type'] = 'native';
