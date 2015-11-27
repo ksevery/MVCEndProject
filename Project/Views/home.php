@@ -1,10 +1,10 @@
 <div>
     <p>You are finally home. It is safe here.</p>
-    <?php if(!\EndF\InputData::getInstance()->hasCookies('token')) :?>
-    <div id="login">
+    <?php if(!\EndF\Application::getInstance()->getHttpContext()->getSession()->hasSessionKey('_token')) :?>
+    <div id="login" class="row">
         <?php
             \EndF\FormViewHelper::init()
-                ->initForm('users/login', ['class' => 'formGroup'], 'post')
+                ->initForm('../users/login', ['class' => 'formGroup'], 'post')
                 ->initLabel()->setValue("Username")->setAttribute('for', 'username')->create()
                 ->initTextBox()->setName('username')->setAttribute('id', 'username')->setAttribute('class', 'form-control input-md')->create()
                 ->initLabel()->setValue("Password")->setAttribute('for', 'password')->create()
@@ -13,11 +13,11 @@
                 ->render();
         ?>
     </div>
-    <div>
+    <div class="row">
         <h1 class="text-center">Register</h1>
         <?php
         \EndF\FormViewHelper::init()
-            ->initForm('/users/register', ['class' => 'form-group'], 'post')
+            ->initForm('../users/register', ['class' => 'form-group'], 'post')
             ->initLabel()->setValue("Username")->setAttribute('for', 'username')->create()
             ->initTextBox()->setName('username')->setAttribute('id', 'username')->setAttribute('class', 'form-control input-md')->create()
             ->initLabel()->setValue("Password")->setAttribute('for', 'password')->create()
@@ -30,12 +30,12 @@
     </div>
     <?php else : ?>
     <div>
-        <h1>Hello, <?= \EndF\Application::getInstance()->getSession()->_username ?></h1>
+        <h1>Hello, <?= \EndF\Application::getInstance()->getHttpContext()->getSession()->_username ?></h1>
         <?php
             \EndF\FormViewHelper::init()
-        ->initForm('users/logout', ['class' => 'formGroup'], 'post')
+        ->initForm('../users/logout', ['class' => 'formGroup'], 'post')
         ->initSubmit()->setAttribute('value', 'Logout')->setAttribute('class', 'btn btn-primary btn-lg col-sm-4 col-sm-offset-4')->create()
-        ->render();
+        ->render(true);
         ?>
     </div>
     <?php endif; ?>

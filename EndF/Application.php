@@ -1,8 +1,11 @@
 <?php
+declare(strict_types=1);
 namespace EndF;
 
+use EndF\HttpContext\HttpContext;
+use EndF\HttpContext\Sessions\NativeSession;
 use EndF\Routers\DefaultRouter;
-use EndF\Sessions\NativeSession;
+use EndF\Routers\IRouter;
 
 require 'Autoloader.php';
 
@@ -16,7 +19,7 @@ class Application
      */
     private $router = null;
     private $dbConnections = array();
-    private $session = null;
+    private $httpContext = null;
 
     private function __construct()
     {
@@ -43,15 +46,16 @@ class Application
         if(isset($sess['autostart'])){
             if($sess['type'] == 'native'){
                 $s = new NativeSession($sess['name'], $sess['lifetime'], $sess['path'], $sess['domain'], $sess['secure']);
+                $http = new HttpContext(null, $s);
             }
 
-            $this->setSession($s);
+            $this->setHttpContext($http ?? new HttpContext());
         }
 
         $this->frontController->dispatch();
     }
 
-    public function getRouter()
+    public function getRouter(): IRouter
     {
         return $this->router;
     }
@@ -62,28 +66,32 @@ class Application
     }
 
     /**
-     * @return Sessions\ISession
+     * @return HttpContext
      */
-    public function getSession()
+    public function getHttpContext()
     {
-        return $this->session;
+        return $this->httpContext;
     }
 
-    public function setSession(\EndF\Sessions\ISession $session)
+    /**
+     * @param
+     */
+    public function setHttpContext(HttpContext $httpContext)
     {
-        $this->session = $session;
+        $this->httpContext = $httpContext;
     }
 
     /**
      * @return \EndF\Config
      */
-    public function getConfig()
+    public function getConfig() : Config
     {
         return $this->config;
     }
 
     public function getConfigFolder()
     {
+
         return $this->config->getConfigFolder();
     }
 
@@ -125,7 +133,7 @@ class Application
         return self::$instance;
     }
 
-    public function exceptionHandler(\Exception $ex)
+    public function exceptionHandler(\Throwable $ex)
     {
         if($this->config && $this->config->app['displayExceptions'] == true){
             echo '<pre>' . print_r($ex, true) . '</pre>';
@@ -144,4 +152,6 @@ class Application
             exit;
         }
     }
+
+
 }

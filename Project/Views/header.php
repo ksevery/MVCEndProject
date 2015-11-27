@@ -6,7 +6,7 @@
     </header>
     <nav>
         <ul>
-            <li><a href="http://localhost:8024/home/index">Home</a></li>
+            <li><a href="http://localhost:8060/home/index">Home</a></li>
         </ul>
     </nav>
 </div>

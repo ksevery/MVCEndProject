@@ -1,5 +1,5 @@
 <?php
-namespace EndF\Sessions;
+namespace EndF\HttpContext\Sessions;
 
 
 class NativeSession implements ISession
@@ -27,6 +27,7 @@ class NativeSession implements ISession
 
     public function destroySession()
     {
+        session_unset();
         session_destroy();
     }
 
@@ -38,5 +39,10 @@ class NativeSession implements ISession
     public function __set($name, $value)
     {
         $_SESSION[$name] = $value;
+    }
+
+    public function hasSessionKey($name)
+    {
+        return isset($_SESSION[$name]);
     }
 }

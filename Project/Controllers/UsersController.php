@@ -33,7 +33,6 @@ class UsersController extends BaseController
      */
     public function login(UserLoginBindingModel $login)
     {
-        var_dump($login);
         $this->db->prepare("SELECT userId, username
                                 FROM users
                                 WHERE username = ? AND password = ?",
@@ -45,9 +44,9 @@ class UsersController extends BaseController
 
         $id = $response['userId'];
         $username = $response['username'];
-        $this->session->_login = $id;
-        $this->session->_username = $login->getUsername();
-        $this->session->escapedUsername = $username;
+        $this->httpContext->getSession()->_login = $id;
+        $this->httpContext->getSession()->_username = $login->getUsername();
+        $this->httpContext->getSession()->escapedUsername = $username;
         $this->redirect('/');
     }
 
@@ -56,7 +55,8 @@ class UsersController extends BaseController
      */
     public function logout()
     {
-        $this->session->destroySession();
+        $this->httpContext->getSession()->destroySession();
+        $this->httpContext->getCookies()->removeCookie('_token');
         $this->redirect('/');
     }
 

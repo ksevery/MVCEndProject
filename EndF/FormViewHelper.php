@@ -159,7 +159,6 @@ class FormViewHelper
             $method = $this->_elements['form']['method'];
             echo '<form action="' . $action . '" method="' . $method . '"';
             $attributes = $this->_elements['formAttributes'];
-            //var_dump($attributes);
             foreach ($attributes as $attribute => $value) {
                 echo " " . $attribute . '="' . $value . '"';
             }

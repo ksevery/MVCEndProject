@@ -2,6 +2,7 @@
 namespace EndF;
 
 
+
 class Config
 {
     private static $instance = null;

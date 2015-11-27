@@ -28,7 +28,7 @@ class BaseController
      */
     protected $db;
 
-    protected $session;
+    protected $httpContext;
 
     protected $validator;
 
@@ -38,7 +38,7 @@ class BaseController
         $this->view = View::getInstance();
         $this->config = $this->app->getConfig();
         $this->input = InputData::getInstance();
-        $this->session = $this->app->getSession();
+        $this->httpContext = $this->app->getHttpContext();
         $this->db = new SimpleDB();
     }
 

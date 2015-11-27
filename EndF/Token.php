@@ -17,15 +17,11 @@ class Token
     }
     public static function render($samePage = false)
     {
-        if (!$samePage) {
-            self::generateToken();
-        }
-        $html = '<input type="hidden" name="_token" value="' . Application::getInstance()->getSession()->_token . '">';
-        echo $html;
+        self::generateToken();
     }
     public static function validates($token)
     {
-        $isValid = Application::getInstance()->getSession()->_token === $token;
+        $isValid = Application::getInstance()->getHttpContext()->getSession()->_token === $token;
         self::generateToken();
         return $isValid;
     }
@@ -34,10 +30,10 @@ class Token
         if (!$samePageToken) {
             self::generateToken();
         }
-        return Application::getInstance()->getSession()->_token;
+        return Application::getInstance()->getHttpContext()->getSession()->_token;
     }
     private static function generateToken()
     {
-        Application::getInstance()->getSession()->_token = base64_encode(openssl_random_pseudo_bytes(64));
+        Application::getInstance()->getHttpContext()->getSession()->_token = base64_encode(openssl_random_pseudo_bytes(64));
     }
 }

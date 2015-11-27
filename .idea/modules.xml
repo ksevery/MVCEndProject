@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/MVCEndProject.iml" filepath="$PROJECT_DIR$/.idea/MVCEndProject.iml" />
+      <module fileurl="file://C:/xampp/htdocs/MVCProject/MVCEndProject/.idea/MVCEndProject.iml" filepath="C:/xampp/htdocs/MVCProject/MVCEndProject/.idea/MVCEndProject.iml" />
     </modules>
   </component>
 </project>
