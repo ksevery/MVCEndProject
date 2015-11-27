@@ -17,4 +17,6 @@ $cnf['session']['path'] = '/';
 $cnf['session']['domain'] = '';
 $cnf['session']['secure'] = false;
 
+$cnf['identity']['userClass'] = 'Project\Models\ApplicationUser';
+
 return $cnf;

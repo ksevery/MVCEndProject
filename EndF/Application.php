@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace EndF;
 
+use EndF\DB\SimpleDB;
 use EndF\HttpContext\HttpContext;
 use EndF\HttpContext\Sessions\NativeSession;
 use EndF\Routers\DefaultRouter;
@@ -20,6 +21,7 @@ class Application
     private $router = null;
     private $dbConnections = array();
     private $httpContext = null;
+    private $identity = null;
 
     private function __construct()
     {
@@ -50,6 +52,14 @@ class Application
             }
 
             $this->setHttpContext($http ?? new HttpContext());
+        }
+
+        if(isset($this->config->app['identity']['userClass'])){
+            $userConfigClass = $this->config->app['identity']['userClass'];
+            var_dump($userConfigClass);
+            $this->identity = new Identity($userConfigClass, new SimpleDB());
+        } else {
+            $this->identity = new Identity(new IdentityUser(null, null), new SimpleDB());
         }
 
         $this->frontController->dispatch();
@@ -119,6 +129,11 @@ class Application
         $this->dbConnections[$connection] = $dbh;
 
         return $dbh;
+    }
+
+    public function getIdentity()
+    {
+        return $this->identity;
     }
 
     /**

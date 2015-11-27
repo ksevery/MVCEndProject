@@ -17,11 +17,15 @@ final class Autoloader
     }
     public static function loadClass($class)
     {
+
         foreach (self::$namespaces as $namespace => $path) {
+
             if (strpos($class, $namespace) === 0) {
+
                 $invariantSystemPath = str_replace('\\', DIRECTORY_SEPARATOR, $class);
                 $filePath = substr_replace($invariantSystemPath, $path, 0, strlen($namespace)) . '.php';
                 $realPath = realpath($filePath);
+
                 if ($realPath && is_readable($realPath)) {
                     include $realPath;
                 } else {
