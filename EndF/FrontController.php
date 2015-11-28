@@ -278,7 +278,7 @@ class FrontController
                     $this->scannedControllers[] = $normalizedPath;
                     $reflectionController = new \ReflectionClass(new $normalizedPath());
                     $docComment = $reflectionController->getDocComment();
-                    if(!empty($docComment)){
+                    if($docComment){
                         $annotations = AnnotationParser::getAnnotationClass($docComment);
                         self::$controllersMethodsAnnotations[$reflectionController->getName()] = $annotations;
                     }
@@ -286,9 +286,9 @@ class FrontController
                     foreach ($methods as $method) {
                         preg_match_all('/@Route\("(.*)"\)/', $method->getDocComment(), $matches);
                         $routes = $matches[1];
-                        if(empty($matches)){
+                        if(empty($matches[1])){
                             $docComment = $method->getDocComment();
-                            if(!empty($docComment)){
+                            if($docComment){
                                 $annotations = AnnotationParser::getAnnotationClass($docComment);
                                 self::$controllersMethodsAnnotations[$reflectionController->getName() . '\\' . $method->getName()] = $annotations;
                             }
@@ -326,9 +326,17 @@ class FrontController
                 }
             }
             if (method_exists($calledController, $this->method)) {
-                if ($this->isValidRequestMethod($calledController, $this->method)) {
+                //if ($this->isValidRequestMethod($calledController, $this->method)) {
                     // Create binding model
                     $refMethod = new \ReflectionMethod($calledController, $this->method);
+                $fullMethodName = $refMethod->getDeclaringClass()->getName() . '\\' . $refMethod->getName();
+                    if(isset(self::$controllersMethodsAnnotations[$fullMethodName])){
+                        foreach(self::$controllersMethodsAnnotations[$fullMethodName] as $ann){
+                            if(!$ann->performAction(Application::getInstance()->getHttpContext())){
+                                throw new \Exception('Access denied!', 403);
+                            }
+                        }
+                    }
                     $doc = $refMethod->getDocComment();
                     // Validate accessibility
                     $this->ValidateAuthorization($doc);
@@ -358,9 +366,9 @@ class FrontController
                         $calledController->{strtolower($this->method)}();
                     }
                     exit;
-                } else {
-                    throw new \Exception("Method does not allow '" . ucfirst($this->requestMethod) . "' requests!", 500);
-                }
+//                } else {
+//                    throw new \Exception("Method does not allow '" . ucfirst($this->requestMethod) . "' requests!", 500);
+//                }
             } else {
                 throw new \Exception("'" . $this->method . "' not found in '" . $file . '.php', 404);
             }
@@ -390,15 +398,13 @@ class FrontController
             if (count($foundRequestAnnotations) > 1) {
                 throw new \Exception('Method cannot have more than 1 request method annotation', 500);
             }
-            $request = $foundRequestAnnotations[0];
-            if (strtolower($request) != strtolower($this->requestMethod)) {
-                return false;
-            }
+
             return true;
         }
         if (strtolower($this->requestMethod) != strtolower($this->configRequestMethod)) {
             return false;
         }
+
         return true;
     }
 

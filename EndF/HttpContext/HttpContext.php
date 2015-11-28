@@ -11,7 +11,6 @@ class HttpContext
 {
     private $request;
     private $cookies;
-    private $userData;
     private $session;
 
     public function __construct(ICookie $cookie = null, ISession $session = null, Request $request = null, UserData $user = null)
@@ -19,7 +18,7 @@ class HttpContext
         $this->cookies = $cookie ?? new HttpCookie();
         $this->session = $session ?? new NativeSession('sess');
         $this->request = $request ?? new Request();
-        $this->userData = $user;
+        $this->session->userData = $user;
     }
 
     public function getRequest() : Request
@@ -34,12 +33,12 @@ class HttpContext
 
     public function getUserData()
     {
-        return $this->userData;
+        return $this->session->userData;
     }
 
     public function setUserData(UserData $user)
     {
-        $this->userData = $user;
+        $this->session->userData = $user;
     }
 
     public function getSession() : ISession

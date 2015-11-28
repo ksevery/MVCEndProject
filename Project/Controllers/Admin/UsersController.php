@@ -7,9 +7,8 @@ use EndF\BaseController;
 class UsersController extends BaseController
 {
     /**
-     * @PUT
-     * @Admin
-     * @param $userId
+     * @EndF\DefaultAnnotations\PUT
+     * @EndF\DefaultAnnotations\Admin
      */
     public function update($userId)
     {

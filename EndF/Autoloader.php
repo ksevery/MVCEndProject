@@ -17,11 +17,8 @@ final class Autoloader
     }
     public static function loadClass($class)
     {
-
         foreach (self::$namespaces as $namespace => $path) {
-
             if (strpos($class, $namespace) === 0) {
-
                 $invariantSystemPath = str_replace('\\', DIRECTORY_SEPARATOR, $class);
                 $filePath = substr_replace($invariantSystemPath, $path, 0, strlen($namespace)) . '.php';
                 $realPath = realpath($filePath);
@@ -52,6 +49,7 @@ final class Autoloader
             throw new \Exception('Invalid namespace: ' . $namespace);
         }
     }
+
     public static function registerNamespaces($namespaces)
     {
         if (is_array($namespaces)) {

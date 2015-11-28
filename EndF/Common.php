@@ -47,4 +47,15 @@ class Common
         return htmlentities($data);
     }
 
+
+    public static function writeToConsole($message)
+    {
+        echo '<script>' . $message . '</script>';
+    }
+
+    public static function dump($message)
+    {
+        var_dump($message);
+        echo '<br/>';
+    }
 }

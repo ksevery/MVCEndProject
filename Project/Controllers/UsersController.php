@@ -2,6 +2,7 @@
 namespace Controllers;
 
 use EndF\BaseController;
+use EndF\Common;
 use EndF\HttpContext\UserData;
 use Models\BindingModels\RegisterUserBindingModel;
 use Models\BindingModels\UserLoginBindingModel;
@@ -9,7 +10,7 @@ use Models\BindingModels\UserLoginBindingModel;
 class UsersController extends BaseController
 {
     /**
-     * @PUT
+     * @EndF\DefaultAnnotations\PUT
      * @Route("users/{id:int}")
      * @param $productId
      */
@@ -19,7 +20,7 @@ class UsersController extends BaseController
     }
 
     /**
-     * @Authorize
+     * @EndF\DefaultAnnotations\Authorize
      */
     public function profile()
     {
@@ -27,7 +28,7 @@ class UsersController extends BaseController
     }
 
     /**
-     * @POST
+     * @EndF\DefaultAnnotations\POST
      * @BINDING UserLoginBindingModel $login
      * @param UserLoginBindingModel $login
      * @throws \Exception
@@ -52,11 +53,12 @@ class UsersController extends BaseController
         $userData = new UserData();
         $userData->username = $username;
         $this->httpContext->setUserData($userData);
-        $this->redirect('/');
+        Common::dump($this->httpContext->getUserData());
+        //$this->redirect('/');
     }
 
     /**
-     * @POST
+     * @EndF\DefaultAnnotations\POST
      */
     public function logout()
     {
@@ -66,7 +68,7 @@ class UsersController extends BaseController
     }
 
     /**
-     * @POST
+     * @EndF\DefaultAnnotations\POST
      * @BINDING RegisterUserBindingModel $user
      * @param RegisterUserBindingModel $user
      * @throws \Exception

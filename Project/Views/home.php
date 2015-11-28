@@ -30,7 +30,7 @@
     </div>
     <?php else : ?>
     <div>
-        <h1>Hello, <?= \EndF\Application::getInstance()->getHttpContext()->getSession()->_username ?></h1>
+        <h1>Hello, <?= \EndF\Common::dump(\EndF\Application::getInstance()->getHttpContext()->getUserData()) ?></h1>
         <?php
             \EndF\FormViewHelper::init()
         ->initForm('../users/logout', ['class' => 'formGroup'], 'post')

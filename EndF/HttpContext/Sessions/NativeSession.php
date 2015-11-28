@@ -2,6 +2,8 @@
 namespace EndF\HttpContext\Sessions;
 
 
+use EndF\Common;
+
 class NativeSession implements ISession
 {
     public function __construct($name, $lifetime = 3600, $path = null, $domain = null, $secure = false)
