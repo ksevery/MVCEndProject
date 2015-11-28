@@ -17,12 +17,22 @@ class Identity
         $this->createDbModel();
     }
 
-
-
     private function createDbModel()
     {
         $reflect = new \ReflectionClass($this->userObject);
         $props = $reflect->getProperties(\ReflectionProperty::IS_PUBLIC | \ReflectionProperty::IS_PROTECTED);
+
+        $this->db->prepare("SHOW TABLES LIKE 'usersRoles'");
+        $this->db->execute();
+        if($this->db->affectedRows() <= 0) {
+            $sql = "CREATE TABLE usersRoles(roleId INT PRIMARY KEY AUTO_INCREMENT, roleName varchar(50), rolePriority INT)";
+            $this->db->prepare($sql);
+            $this->db->execute();
+
+            $sql = "INSERT INTO usersRoles(roleName, rolePriority) VALUES('User', 0)";
+            $this->db->prepare($sql);
+            $this->db->execute();
+        }
 
         $this->db->prepare("SHOW TABLES LIKE 'users'");
         $this->db->execute();
@@ -49,7 +59,7 @@ class Identity
                 }
             }
         } else {
-            $sql = 'CREATE TABLE users( userId CHAR(40) PRIMARY KEY NULL , username varchar(100) NOT NULL, password varchar(100) NOT NULL, email varchar(100) ';
+            $sql = 'CREATE TABLE users( userId CHAR(40) PRIMARY KEY NULL , username varchar(100) NOT NULL, password varchar(100) NOT NULL, email varchar(100), roleId INT  ';
 
             foreach($props as $prop){
                 $docComment = $prop->getDocComment();
@@ -66,7 +76,7 @@ class Identity
                 $sql .= ",$name $type";
             }
 
-            $sql .= ')';
+            $sql .= ', FOREIGN KEY (roleId) REFERENCES usersRoles(roleId))';
         }
 
         $sql = rtrim($sql, ", ");
@@ -78,8 +88,12 @@ class Identity
         if($this->db->affectedRows() > 0){
             return;
         } else {
-            $this->db->prepare("DELIMITER $$ CREATE TRIGGER t_UserId  BEFORE INSERT ON users  FOR EACH ROW BEGIN  SET NEW.userId = uuid(); end $$
-");
+            $sql = "DELIMITER #" .
+                PHP_EOL . "CREATE TRIGGER `t_UserId` BEFORE INSERT ON `users` FOR EACH ROW" .
+                PHP_EOL . "BEGIN" .
+                PHP_EOL . "SET NEW.userId = uuid();" .
+                PHP_EOL . "END#";
+            $this->db->prepare($sql);
             $this->db->execute();
         }
     }

@@ -90,7 +90,7 @@ class UsersController extends BaseController
             throw new \Exception('Password confirmation does not match!', 400);
         }
 
-        $this->db->prepare('INSERT INTO users(username, password) values(?, ?)', array($username, $password));
+        $this->db->prepare('INSERT INTO users(username, password, roleId) values(?, ?, ?)', array($username, $password, 1));
         $this->db->execute();
 
         $loginModel = new UserLoginBindingModel();
