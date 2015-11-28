@@ -1,6 +1,6 @@
 <div>
     <p>You are finally home. It is safe here.</p>
-    <?php if(!\EndF\Application::getInstance()->getHttpContext()->getSession()->hasSessionKey('_token')) :?>
+    <?php if(!\EndF\Application::getInstance()->getHttpContext()->getSession()->hasSessionKey('token')) :?>
     <div id="login" class="row">
         <?php
             \EndF\FormViewHelper::init()

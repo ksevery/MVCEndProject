@@ -3,6 +3,7 @@ namespace EndF;
 
 
 use EndF\DB\SimpleDB;
+use EndF\HttpContext\HttpContext;
 
 class Identity
 {

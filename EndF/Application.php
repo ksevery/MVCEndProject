@@ -56,7 +56,7 @@ class Application
 
         if(isset($this->config->app['identity']['userClass'])){
             $userConfigClass = $this->config->app['identity']['userClass'];
-            $this->identity = new Identity(new $userConfigClass, new SimpleDB());
+            $this->identity = new Identity($userConfigClass, new SimpleDB());
         } else {
             $this->identity = new Identity(new IdentityUser(null, null), new SimpleDB());
         }

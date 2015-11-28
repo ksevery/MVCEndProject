@@ -2,6 +2,7 @@
 namespace Controllers;
 
 use EndF\BaseController;
+use EndF\HttpContext\UserData;
 use Models\BindingModels\RegisterUserBindingModel;
 use Models\BindingModels\UserLoginBindingModel;
 
@@ -47,6 +48,10 @@ class UsersController extends BaseController
         $this->httpContext->getSession()->_login = $id;
         $this->httpContext->getSession()->_username = $login->getUsername();
         $this->httpContext->getSession()->escapedUsername = $username;
+        $this->httpContext->getSession()->token = base64_encode(openssl_random_pseudo_bytes(64));
+        $userData = new UserData();
+        $userData->username = $username;
+        $this->httpContext->setUserData($userData);
         $this->redirect('/');
     }
 

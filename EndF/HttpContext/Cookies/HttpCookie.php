@@ -22,7 +22,7 @@ class HttpCookie implements ICookie
             unset($_COOKIE[$name]);
         }
 
-        setcookie($name, '123', 1);
+        setcookie($name, null, 1);
     }
 
     public function hasCookie($name) : bool
