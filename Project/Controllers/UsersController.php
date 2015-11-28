@@ -1,30 +1,23 @@
 <?php
 namespace Controllers;
 
-use EndF\BaseController;
 use EndF\Common;
 use EndF\HttpContext\UserData;
 use Models\BindingModels\RegisterUserBindingModel;
 use Models\BindingModels\UserLoginBindingModel;
 
-class UsersController extends BaseController
+class UsersController extends ProjectBaseController
 {
-    /**
-     * @EndF\DefaultAnnotations\PUT
-     * @Route("users/{id:int}")
-     * @param $productId
-     */
-    public function sell($productId)
-    {
-        echo 'sold';
-    }
-
     /**
      * @EndF\DefaultAnnotations\Authorize
      */
     public function profile()
     {
-        echo 'My Profile';
+        $this->view->appendToLayout('header', 'header');
+        $this->view->appendToLayout('meta', 'meta');
+        $this->view->appendToLayout('body', 'profile');
+        $this->view->appendToLayout('footer', 'footer');
+        $this->view->displayLayout('Layouts.home');
     }
 
     /**
@@ -46,14 +39,14 @@ class UsersController extends BaseController
 
         $id = $response['userId'];
         $username = $response['username'];
-        $this->httpContext->getSession()->_login = $id;
-        $this->httpContext->getSession()->_username = $login->getUsername();
         $this->httpContext->getSession()->escapedUsername = $username;
         $this->httpContext->getSession()->token = base64_encode(openssl_random_pseudo_bytes(64));
         $userData = new UserData();
-        $userData->username = $username;
+        $userData->username = $login->getUsername();
+        $userData->id = $id;
+        $userData->role = $this->db->getUserRole($id);
         $this->httpContext->setUserData($userData);
-        //Common::dump($this->httpContext->getUserData());
+        //Common::dump($userData->role);
         $this->redirect('/');
     }
 

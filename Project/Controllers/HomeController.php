@@ -1,11 +1,7 @@
 <?php
 namespace Controllers;
 
-
-use EndF\BaseController;
-use EndF\Common;
-
-class HomeController extends BaseController
+class HomeController extends ProjectBaseController
 {
     public function index()
     {

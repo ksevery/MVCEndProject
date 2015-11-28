@@ -4,6 +4,7 @@ $cnf['namespaces']['Controllers\Admin'] = '../Controllers/Admin/';
 $cnf['namespaces']['Models'] = '../Models/';
 $cnf['namespaces']['Views'] = '../Views/';
 $cnf['namespaces']['Annotations'] = '../Annotations/';
+$cnf['namespaces']['Data'] = '../Data/';
 
 $cnf['views'] = '../Views/';
 $cnf['default_controller'] = 'home';

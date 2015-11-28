@@ -43,6 +43,10 @@ class HttpContext
             $userData->role = $this->session->role;
         }
 
+        if($this->session->hasSessionKey('userId')) {
+            $userData->id = $this->session->userId;
+        }
+
         return $userData;
     }
 
@@ -50,7 +54,8 @@ class HttpContext
     {
         if($user != null){
             $this->session->username = $user->username;
-            $this->session->role = $user->role;;
+            $this->session->role = $user->role;
+            $this->session->userId = $user->id;
         }
 
         $this->session->userData = $user;

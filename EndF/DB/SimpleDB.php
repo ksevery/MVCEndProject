@@ -32,6 +32,8 @@ class SimpleDB
             $this->_db = Application::getInstance()->getDbConnection($this->_connection);
             self::$database = Application::getInstance()->getDbConnection($this->_connection);
         }
+
+        $this->seed();
     }
 
     public function prepare($sql, $params = array(), $pdoOptions = array())
@@ -121,8 +123,8 @@ class SimpleDB
                       FROM users
                       WHERE username = ? AND id = ?");
             $statement->bindColumn(1, $col);
-            $statement->bindParam(1, App::getInstance()->getSession()->_username);
-            $statement->bindParam(2, App::getInstance()->getSession()->_login);
+            $statement->bindParam(1, Application::getInstance()->getSession()->_username);
+            $statement->bindParam(2, Application::getInstance()->getSession()->_login);
             $statement->execute();
             $response = $statement->fetch(\PDO::FETCH_ASSOC);
             $response = $response['is' . ucfirst($role)];
@@ -138,5 +140,53 @@ class SimpleDB
     public function affectedRows()
     {
         return $this->_statement->rowCount();
+    }
+
+    /**
+     * Create custom tables and fill them with data.
+     */
+    public function seed()
+    {
+        if(!$this->tableExists('usersRoles')) {
+            $sql = "CREATE TABLE usersRoles(roleId INT PRIMARY KEY AUTO_INCREMENT, roleName varchar(50), rolePriority INT)";
+            $this->execSql($sql);
+        }
+
+        if(!$this->tableExists('users')){
+            $sql = 'CREATE TABLE users( userId CHAR(40) PRIMARY KEY NULL , username varchar(100) NOT NULL, password varchar(100) NOT NULL, email varchar(100), roleId INT, FOREIGN KEY (roleId) REFERENCES usersRoles(roleId))  ';
+            $this->execSql($sql);
+        }
+
+        $this->prepare("SHOW TRIGGERS LIKE 'users'");
+        $this->execute();
+        if($this->affectedRows() > 0){
+            return;
+        } else {
+            $sql = "DELIMITER #" .
+                PHP_EOL . "CREATE TRIGGER `t_UserId` BEFORE INSERT ON `users` FOR EACH ROW" .
+                PHP_EOL . "BEGIN" .
+                PHP_EOL . "SET NEW.`userId` = uuid();" .
+                PHP_EOL . "END#";
+            $this->prepare($sql);
+            $this->execute();
+        }
+    }
+
+    protected function execSql($sql)
+    {
+        $this->prepare($sql);
+        $this->execute();
+    }
+
+    protected function tableExists($tableName) : bool
+    {
+        $sql = "SHOW TABLES LIKE ?";
+        $this->prepare($sql);
+        $this->execute(array($tableName));
+        if($this->affectedRows() > 0){
+            return true;
+        }
+
+        return false;
     }
 }
