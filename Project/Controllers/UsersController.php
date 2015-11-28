@@ -53,8 +53,8 @@ class UsersController extends BaseController
         $userData = new UserData();
         $userData->username = $username;
         $this->httpContext->setUserData($userData);
-        Common::dump($this->httpContext->getUserData());
-        //$this->redirect('/');
+        //Common::dump($this->httpContext->getUserData());
+        $this->redirect('/');
     }
 
     /**

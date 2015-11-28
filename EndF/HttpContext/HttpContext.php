@@ -1,6 +1,7 @@
 <?php
 namespace EndF\HttpContext;
 
+use EndF\Common;
 use EndF\HttpContext\Cookies\HttpCookie;
 use EndF\HttpContext\Cookies\ICookie;
 use EndF\HttpContext\HttpRequest\Request;
@@ -18,7 +19,7 @@ class HttpContext
         $this->cookies = $cookie ?? new HttpCookie();
         $this->session = $session ?? new NativeSession('sess');
         $this->request = $request ?? new Request();
-        $this->session->userData = $user;
+        $this->setUserData($user);
     }
 
     public function getRequest() : Request
@@ -33,11 +34,25 @@ class HttpContext
 
     public function getUserData()
     {
-        return $this->session->userData;
+        $userData = new UserData();
+        if($this->session->hasSessionKey('username')){
+            $userData->username = $this->session->username;
+        }
+
+        if($this->session->hasSessionKey('role')) {
+            $userData->role = $this->session->role;
+        }
+
+        return $userData;
     }
 
-    public function setUserData(UserData $user)
+    public function setUserData(UserData $user = null)
     {
+        if($user != null){
+            $this->session->username = $user->username;
+            $this->session->role = $user->role;;
+        }
+
         $this->session->userData = $user;
     }
 

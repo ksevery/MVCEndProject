@@ -3,7 +3,6 @@ namespace EndF;
 
 
 use EndF\DB\SimpleDB;
-use EndF\HttpContext\HttpContext;
 
 class Identity
 {
@@ -17,6 +16,8 @@ class Identity
 
         $this->createDbModel();
     }
+
+
 
     private function createDbModel()
     {
