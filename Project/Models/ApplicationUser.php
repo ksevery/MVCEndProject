@@ -1,11 +1,14 @@
 <?php
-namespace Project\Models;
+namespace Models;
 
 
 use EndF\IdentityUser;
 
 class ApplicationUser extends IdentityUser
 {
+    /**
+     * @ORM\Column varchar(50)
+     */
     protected $phoneNumber;
 
     public function __construct()

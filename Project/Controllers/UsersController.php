@@ -83,7 +83,7 @@ class UsersController extends BaseController
             throw new \Exception('Password confirmation does not match!', 400);
         }
 
-        $this->db->prepare('INSERT INTO users(username, password, money) values(?, ?, ?)', array($username, $password, $this->config->cart['initialCash']));
+        $this->db->prepare('INSERT INTO users(username, password) values(?, ?)', array($username, $password));
         $this->db->execute();
 
         $loginModel = new UserLoginBindingModel();

@@ -35,7 +35,7 @@
             \EndF\FormViewHelper::init()
         ->initForm('../users/logout', ['class' => 'formGroup'], 'post')
         ->initSubmit()->setAttribute('value', 'Logout')->setAttribute('class', 'btn btn-primary btn-lg col-sm-4 col-sm-offset-4')->create()
-        ->render(true);
+        ->render();
         ?>
     </div>
     <?php endif; ?>

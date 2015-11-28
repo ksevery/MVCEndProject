@@ -4,12 +4,24 @@ namespace EndF;
 
 class IdentityUser
 {
+    /**
+     * @ORM\Column char(40)
+     */
     protected $id;
 
+    /**
+     * @ORM\Column varchar(50)
+     */
     protected $username;
 
+    /**
+     * @ORM\Column varchar(100)
+     */
     protected $password;
 
+    /**
+     * @ORM\Column varchar(100)
+     */
     protected $email;
 
     public function __construct(string $username, string $password, string $email = null)
