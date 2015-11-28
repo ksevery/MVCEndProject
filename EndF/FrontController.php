@@ -5,6 +5,7 @@ use EndF\DB\SimpleDB;
 
 class FrontController
 {
+    private static $controllersMethodsAnnotations = array();
     private static $instance = null;
 
     private $namespace = null;
@@ -276,10 +277,22 @@ class FrontController
                 if (!array_key_exists($normalizedPath, $this->scannedControllers)) {
                     $this->scannedControllers[] = $normalizedPath;
                     $reflectionController = new \ReflectionClass(new $normalizedPath());
+                    $docComment = $reflectionController->getDocComment();
+                    if(!empty($docComment)){
+                        $annotations = AnnotationParser::getAnnotationClass($docComment);
+                        self::$controllersMethodsAnnotations[$reflectionController->getName()] = $annotations;
+                    }
                     $methods = $reflectionController->getMethods();
                     foreach ($methods as $method) {
                         preg_match_all('/@Route\("(.*)"\)/', $method->getDocComment(), $matches);
                         $routes = $matches[1];
+                        if(empty($matches)){
+                            $docComment = $method->getDocComment();
+                            if(!empty($docComment)){
+                                $annotations = AnnotationParser::getAnnotationClass($docComment);
+                                self::$controllersMethodsAnnotations[$reflectionController->getName() . '\\' . $method->getName()] = $annotations;
+                            }
+                        }
                         foreach ($routes as $route) {
                             if (array_key_exists(strtolower($route), $this->customRoutes)) {
                                 throw new \Exception("Route '" . $route . "' already defined in '" .
@@ -305,6 +318,13 @@ class FrontController
         $realPath = realpath($realPath);
         if (file_exists($realPath) && is_readable($realPath)) {
             $calledController = new $file();
+            if(isset(self::$controllersMethodsAnnotations[ucfirst($this->controller)])){
+                foreach(self::$controllersMethodsAnnotations[ucfirst($this->controller)] as $ann){
+                    if(!$ann->performAction(Application::getInstance()->getHttpContext())){
+                        throw new \Exception('Access denied!', 403);
+                    }
+                }
+            }
             if (method_exists($calledController, $this->method)) {
                 if ($this->isValidRequestMethod($calledController, $this->method)) {
                     // Create binding model
@@ -388,7 +408,7 @@ class FrontController
         $notLoggedRegex = '/@notlogged/';
         preg_match($notLoggedRegex, $doc, $matches);
         if ($matches) {
-            if (Application::getInstance()->getSession()->_login) {
+            if (Application::getInstance()->getHttpContext()->getSession()->_login) {
                 throw new \Exception("Already logged in!", 400);
             }
         }
@@ -396,10 +416,10 @@ class FrontController
         preg_match($authorizeRegex, $doc, $matches);
         if ($matches) {
             $error = 'Unauthorized!';
-            if ($matches[1]) {
+            if (isset($matches[1])) {
                 $error = ucfirst($matches[1]);
             };
-            if (!Application::getInstance()->getSession()->_login) {
+            if (!Application::getInstance()->getHttpContext()->getSession()->_login) {
                 throw new \Exception($error, 401);
             }
         }
